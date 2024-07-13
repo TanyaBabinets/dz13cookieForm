@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .error-message {
+            color: red;
+            display: none;
+        }
+    </style>
+    <link rel="stylesheet" href="cookie.css">
+</head>
+<script>
+    //loading cookies
+    function docLoad() {
+        let str = document.cookie;
+        alert("cookie loaded:" + str);
+        if (str.length === 0) {
+            document.getElementById("part1").style.display = "block";
+            document.getElementById("part2").style.display = "block";
+            return;
+        }
+     
+        let arr = str.split('; ');
+
+        let cookies = {};
+        arr.forEach(cookie => {
+            let [name, value] = cookie.split('=');
+            cookies[name] = decodeURIComponent(value);
+        });
+        document.getElementById("login").value = cookies.LOGIN;
+        document.getElementById("surname").value = cookies.SURNAME;
+        document.querySelector(`input[name="pol"][value="${cookies.POL}"]`).checked = true;
+        let languages = cookies.LANG ? cookies.LANG.split(',') : [];
+        languages.forEach(lang => {
+            document.querySelector(`input[value="${lang}"]`).checked = true;
+        });
+        document.getElementById("fild").value = cookies.FIELD;
+        document.getElementById("email").value = cookies.EMAIL;
+        document.getElementById("info").value = cookies.INFO || '';
+    }
+
+// почему такой метод получения куки как у вас не сработал тут? 
+    //    let arr = str.split('; ');
+    //     let login = arr[0].split('=')[1];
+    //     let surname = arr[1].split('=')[1];
+    //     let pol = arr[2].split('=')[1];
+    //     let lang = arr[3].split('=')[1];
+    //     let fild = arr[4].split('=')[1];
+    //     let email = arr[5].split('=')[1];
+    //     let info = arr[6].split('=')[1];
+
+    //     login = decodeURIComponent(login);
+    //     surname = decodeURIComponent(surname);
+    //     pol = decodeURIComponent(pol);
+    //     lang = decodeURIComponent(lang);
+    //     fild = decodeURIComponent(fild);
+    //     email = decodeURIComponent(email);
+    //     info = decodeURIComponent(info);
+
+    //     document.getElementById("part1").style.display = "block";
+    //     document.getElementById("part2").style.display = "block";
+
+    // }
+
+    function validateForm(formData) {
+        let valid = true;
+        const form = document.getElementById('dataReg');
+
+        //login
+        const login = formData.get('login');
+        const loginError = document.getElementById('login-error');
+        const loginRegex = /^[^\u0400-\u04FF]*$/; //исключаю кириллицу
+        if (!loginRegex.test(login)) {
+            loginError.textContent = 'Используйте только латинские буквы, цифры и символы';
+            loginError.style.display = 'block';
+            valid = false;
+        } else {
+            loginError.style.display = 'none';
+        }
+
+        //surname
+        const surname = formData.get('surname');
+        const surnameError = document.getElementById('surname-error');
+        if (!surname) {
+            surnameError.textContent = 'Заполните поле';
+            surnameError.style.display = 'block';
+            valid = false;
+        } else {
+            surnameError.style.display = 'none';
+        }
+
+        //password
+        const pass = formData.get('pass');
+        const passC = formData.get('passC');
+        const passErr = document.getElementById('pass-error');
+        const passCErr = document.getElementById('passC-error');
+
+        if (pass.length < 3 || pass.length > 10) {
+            passErr.textContent = "Длина пароля должна быть от 3 до 10 символов";
+            passErr.style.display = 'block';
+            valid = false;
+        } else {
+            passErr.style.display = 'none';
+        }
+
+        if (pass !== passC) {
+            passCErr.textContent = "Пароль и подтверждение должны совпадать";
+            passCErr.style.display = 'block';
+            valid = false;
+        } else {
+            passCErr.style.display = 'none';
+        }
+
+        //languages
+        const langChecked = formData.getAll('s1').length > 0 ||
+            formData.getAll('s2').length > 0 ||
+            formData.getAll('s3').length > 0 ||
+            formData.getAll('s4').length > 0 ||
+            formData.getAll('s5').length > 0;
+        const langError = document.getElementById('lang-error');
+        if (!langChecked) {
+            langError.style.display = 'block';
+            valid = false;
+        } else {
+            langError.style.display = 'none';
+        }
+
+        //field
+        const fieldSelected = formData.get('fild') !== "";
+        const fieldError = document.getElementById('fild-error');
+        if (!fieldSelected) {
+            fieldError.style.display = 'block';
+            valid = false;
+        } else {
+            fieldError.style.display = 'none';
+        }
+
+        //email
+        const email = formData.get('email');
+        const emailError = document.getElementById('email-error');
+        const emailRegex = /^[^\u0400-\u04FF\s@]+@[^\s@]+\.[^\s@]+$/; // исключаю кириллицу и нужно @ 
+
+        if (!emailRegex.test(email)) {
+            emailError.textContent = 'Некорректный формат email';
+            emailError.style.display = 'block';
+            valid = false;
+        } else {
+            emailError.style.display = 'none';
+        }
+
+        return valid;
+    }
+
+    function btnClick(formData) {
+        const form = document.getElementById('dataReg');
+
+        if (!form || !formData) {
+            console.error('null');
+            return;
+        }
+
+        if (validateForm(formData)) {
+            let d = new Date();
+            d.setMonth(d.getMonth() + 6);
+            document.cookie = "LOGIN=" + encodeURIComponent(form.login.value) + ";path=/;expires=" + d.toUTCString() + ";";
+            document.cookie = "SURNAME=" + encodeURIComponent(form.surname.value) + ";path=/;expires=" + d.toUTCString() + ";";
+            document.cookie = "POL=" + encodeURIComponent(form.querySelector('input[name="pol"]:checked').value) + ";path=/;expires=" + d.toUTCString() + ";";
+            document.cookie = "FIELD=" + encodeURIComponent(form.fild.value) + ";path=/;expires=" + d.toUTCString() + ";";
+            const languages = [];
+            formData.getAll('s1').length && languages.push('English');
+            formData.getAll('s2').length && languages.push('German');
+            formData.getAll('s3').length && languages.push('French');
+            formData.getAll('s4').length && languages.push('Spain');
+            formData.getAll('s5').length && languages.push('Italian');
+            document.cookie = "LANG=" + encodeURIComponent(languages.join(',')) + ";path=/;expires=" + d.toUTCString() + ";";
+            document.cookie = "EMAIL=" + encodeURIComponent(form.email.value) + ";path=/;expires=" + d.toUTCString() + ";";
+            document.cookie = "INFO=" + encodeURIComponent(form.info.value) + ";path=/;expires=" + d.toUTCString() + ";";
+            alert("данные сохранены");
+            form.reset();
+        } else {
+            alert("Не все поля заполнены или некорректные данные!");
+        }
+    }
+
+    function delCookie() {
+        let d = new Date();
+        d.setMonth(d.getMonth() - 1);
+        document.cookie = "LOGIN=;path=/;expires=" + d.toUTCString() + ";";
+        document.cookie = "SURNAME=;path=/;expires=" + d.toUTCString() + ";";
+        document.cookie = "POL=;path=/;expires=" + d.toUTCString() + ";";
+        document.cookie = "LANG=;path=/;expires=" + d.toUTCString() + ";";
+        document.cookie = "FIELD=;path=/;expires=" + d.toUTCString() + ";";
+        document.cookie = "EMAIL=;path=/;expires=" + d.toUTCString() + ";";
+        document.cookie = "INFO=;path=/;expires=" + d.toUTCString() + ";";
+        alert("Cookie успешно удалён!");
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('dataReg');
+        form.addEventListener('submit', function (event) {
+            event.preventDefault(); 
+            const formData = new FormData(event.target); // новый обьект formData собирает все данные из формы
+            btnClick(formData);
+        });
+        docLoad();
+    });
+</script>
+
+<body>
+    <div class="formBlock">
+        <h2>Регистрация</h2>
+        <form id="dataReg">
+            <div id="part1">
+                <label for="login">Логин<input type="text" id="login" name="login" required /></label><br />
+                <div id="login-error" class="error-message">Заполните поле латинскими буквами</div><br />
+                <label for="pass">Пароль<input type="password" id="pass" name="pass" required /></label><br />
+                <span class="error-message" id="pass-error">Длина пароля должна быть 3-10 символов</span><br />
+                <label for="passC">Подтверждение<input type="password" id="passC" name="passC" required /></label><br />
+                <span class="error-message" id="passC-error">Пароль не совпадает</span><br />
+            </div>
+            <hr>
+            <div id="part2"><label for="surname">Полное имя</label><input type="text" id="surname" name="surname"
+                    required /><br />
+                <span class="error-message" id="surname-error">Заполните поле</span><br />
+            </div>
+            <div id="pol" class="box"> <label for="pol">Пол</label>
+                <div class="radio">
+                    <label>
+                        Женский<input type="radio" name="pol" value="wom" required />
+                    </label>
+                    <label>
+                        Мужской<input type="radio" name="pol" value="men" required />
+                    </label>
+                </div>
+
+                <div id="pol-error" class="error-message">Сделайте свой выбор</div>
+            </div>
+            <div id="langBox">
+                <div id="lang"><label for="lang"> Иностранные языки:</label></div>
+                <div class="checkbox" id="check">
+                    <label for="s1"><input type="checkbox" name="s1" value="English" /> Английский</label><br />
+                    <label for="s2"><input type="checkbox" name="s2" value="German" /> Немецкий</label><br />
+                    <label for="s3"><input type="checkbox" name="s3" value="French" /> Французский</label><br />
+                    <label for="s4"><input type="checkbox" name="s4" value="Spain" /> Испанский</label><br />
+                    <label for="s5"><input type="checkbox" name="s5" value="Italian" /> Итальянский</label><br />
+                    <span class="error-message" id="lang-error">Сделайте свой выбор</span><br />
+                </div>
+            </div>
+            <label for="fild">Сфера деятельности:</label>
+            <select name="fild" id="fild" required>
+                <option value="Education">Образование</option>
+                <option value="Med">Медицина</option>
+                <option value="IT">IT-технологии</option>
+                <option value="Finance">Финансы</option>
+                <option value="Gov">Госслужба</option>
+                <option value="Design">Дизайн</option>
+                <option value="Trade">Торговля</option>
+            </select>
+            <span class="error-message" id="fild-error">Сделайте свой выбор</span><br />
+            <label for="email">Введите email</label><input type="text" id="email" name="email" required /><br />
+            <span class="error-message" id="email-error">Нужен формат ttt@domen.com</span><br />
+            <label for="info">Дополнительная информация</label>
+            <textarea id="info" name="info"></textarea><br />
+    </div>
+    <div id="btn">
+        <input type="submit" class="btn1" style="font-size:18px" value="СОХРАНИТЬ" />
+        <button type="reset" class="btn1">Сброс</button>
+        <h1 id="info"></h1>
+        <input type="button" class="btn1" value="Удалить данные" onclick="delCookie()" />
+    </div>
+    </form>
+</body>
+
+</html>

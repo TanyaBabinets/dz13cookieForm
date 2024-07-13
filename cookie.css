@@ -1,0 +1,146 @@
+* {
+    margin: 0;
+    padding: 0
+}
+
+.error-message {
+    color: red;
+    display: none;
+    margin-top: 5px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    flex-direction: column;
+    text-align: left;
+    background-color: rgb(97, 242, 245);
+    margin-top: 60px;
+}
+
+#part1 {
+    margin-bottom: 10px;
+}
+
+#part2 {
+    margin-top: 10px;
+}
+
+.formBlock {
+    width: 400px;
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid blue;
+    background-color: rgb(240, 240, 128);
+
+}
+
+.formBlock h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.formBlock form {
+    display: flex;
+    flex-direction: column;
+}
+
+.formBlock label {
+    margin-top: 3px;
+    font-size: 16px;
+    font-weight: bold;
+    color: darkblue;
+
+}
+
+.formBlock input[type="text"],
+.formBlock input[type="password"],
+.formBlock select {
+    margin-top: 5px;
+    padding: 5px;
+    border: 2px solid rgb(28, 28, 205);
+    border-radius: 5px;
+    float: right;
+
+}
+
+.box {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.box .radio {
+    display: flex;
+    gap: 2px;
+}
+
+.box .radio label {
+    display: flex;
+    align-items: center;
+}
+
+.formBlock input[type="radio"] {
+    margin-right: 20px;
+    margin-left: 20px;
+}
+#langBox {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.langBox .checkbox {
+    display: flex;
+    gap: 2px;
+}
+
+.langBox .checkbox label {
+    display: flex;
+    align-items: center;
+}
+#lang{
+align-items: center;
+
+align-self: flex-start;
+}
+#check{
+align-items:end;
+}
+.formBlock input[type="checkbox"] {
+    margin-left: 20;
+    margin-bottom: 3px;
+}
+
+.formBlock input[type="submit"],
+#btn {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.btn1 {
+    width: 130px;
+    height: 36px;
+    margin-top: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: darkblue;
+    color: white;
+    cursor: pointer;
+}
+
+.formBlock input[type="submit"]:hover,
+.formBlock button:hover {
+    background-color: rgb(135, 135, 172);
+}
+
+textarea {
+    height: 80px;
+}
